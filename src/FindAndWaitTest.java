@@ -1,6 +1,6 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
@@ -14,25 +14,13 @@ import java.util.Properties;
 
 public class FindAndWaitTest {
 
-    // Locator list
-    final String INBOX = ".//span[.='Inbox']";
-    final String AJAX = ".//span[.='AJAX']";
-    final String ANNOUNCEMENTS  = ".//span[.='Announcements']";
-    final String OPEN_ACCESS_ORM  = ".//span[.='OpenAccess ORM']";
-    final String SILVER_LIGHT  = ".//span[.='Silverlight']";
-    final String WIN_FORMS  = ".//span[.='WinForms']";
-    final String WPF  = ".//span[.='WPF']";
+
+    final String INBOX_FOLDERS = ".//*[@id='ctl00_ContentPlaceHolder1_RadTreeView1']/ul/li/ul/li[3]/ul/li/div/span[@class='rtIn']";
     final String SUBJECT = "//*[@id='ctl00_ContentPlaceHolder2_RadGrid1_ctl00_Header']//a[.='Subject']";
 
+
+
     private WebDriver driver;
-
-    public void clickAndWaitForPresent(String clickElement, final String waitElement) {
-        driver.findElement(By.xpath(clickElement)).click();
-        WebDriverWait wait = new WebDriverWait(driver, 15);
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(waitElement)));
-    }
-
-
     @Test
 
     public void testWebMail() throws IOException{
@@ -43,13 +31,19 @@ public class FindAndWaitTest {
         FirefoxProfile profile = new FirefoxProfile();
         driver = new FirefoxDriver(binary, profile);
         driver.get("http://demos.telerik.com/aspnet-ajax/webmail/default.aspx");
-        clickAndWaitForPresent(INBOX, SUBJECT);
-        clickAndWaitForPresent(AJAX, SUBJECT);
-        clickAndWaitForPresent(ANNOUNCEMENTS, SUBJECT);
-        clickAndWaitForPresent(OPEN_ACCESS_ORM, SUBJECT);
-        clickAndWaitForPresent(SILVER_LIGHT, SUBJECT);
-        clickAndWaitForPresent(WIN_FORMS, SUBJECT);
-        clickAndWaitForPresent(WPF, SUBJECT);
+        WebElement mail = driver.findElement(By.xpath(SUBJECT));
+        WebDriverWait driverWait = new WebDriverWait(driver, 15);
+        for (WebElement folder : driver.findElements(By.xpath(INBOX_FOLDERS))){
+            folder.click();
+            driverWait
+                    .until(ExpectedConditions.stalenessOf(mail));
+            driverWait
+                    .until(ExpectedConditions.presenceOfElementLocated(By.xpath(SUBJECT)));
+
+
+
+        }
+
         driver.quit();
     }
 
