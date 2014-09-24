@@ -65,6 +65,8 @@ public class TestBase {
 
     protected void loginAs(String login, String password) {
         openUrl("");
+        driver.manage().deleteAllCookies();
+        driver.navigate().refresh();
         type(By.id("username"), login);
         type(By.name("password"), password);
         findElement(By.name("submit")).sendKeys(Keys.ENTER);
@@ -90,7 +92,6 @@ public class TestBase {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--test-type");
         driver = new ChromeDriver(options);
-        driver.manage().deleteAllCookies();
         wait = new WebDriverWait(driver, 10);
     }
 
